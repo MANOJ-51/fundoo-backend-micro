@@ -1,0 +1,5 @@
+package com.bridgelabz.fundooadminmicroservice.service;
+
+public class FundooUserService {
+
+}

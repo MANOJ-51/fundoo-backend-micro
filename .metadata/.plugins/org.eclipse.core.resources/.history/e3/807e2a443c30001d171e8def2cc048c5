@@ -1,0 +1,14 @@
+package com.bridgelabz.fundooadminmicroservice.service;
+
+import javax.validation.Valid;
+
+import com.bridgelabz.fundooadminmicroservice.dto.FundooUserDTO;
+import com.bridgelabz.fundooadminmicroservice.util.ResponseClass;
+
+public interface IFundooUserService {
+
+	ResponseClass createUser(@Valid FundooUserDTO fundooUserDTO);
+
+	ResponseClass updateUser(String token, Long userId, @Valid FundooUserDTO fundooUserDTO);
+
+}

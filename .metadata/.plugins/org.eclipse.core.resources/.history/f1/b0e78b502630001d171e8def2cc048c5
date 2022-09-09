@@ -1,0 +1,5 @@
+package com.bridgelabz.fundooadminmicroservice.exceptions;
+
+public class CustomValidation {
+
+}
