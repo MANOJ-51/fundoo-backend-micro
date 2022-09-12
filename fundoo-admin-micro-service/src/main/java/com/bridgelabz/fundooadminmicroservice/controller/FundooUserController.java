@@ -50,7 +50,7 @@ public class FundooUserController {
 	 * @Param fundoo user dto
 	 */
 	@PostMapping("/createUser")
-	public ResponseEntity<ResponseClass> createUser(@RequestBody @Valid FundooUserDTO fundooUserDTO) {
+	public ResponseEntity<ResponseClass> createUser(@Valid @RequestBody  FundooUserDTO fundooUserDTO) {
 		ResponseClass responseClass = iFundooUserService.createUser(fundooUserDTO);
 		return new ResponseEntity<>(responseClass, HttpStatus.OK);
 	}
@@ -101,8 +101,8 @@ public class FundooUserController {
 	 * @Param phone number
 	 */
 	@PostMapping("/retrieveUser")
-	public ResponseEntity<ResponseClass> retrieveUser(@RequestParam String phoneNumber) {
-		ResponseClass responseClass = iFundooUserService.retrieveUser(phoneNumber);
+	public ResponseEntity<ResponseClass> retrieveUser(@RequestHeader String token,@RequestParam Long userId) {
+		ResponseClass responseClass = iFundooUserService.retrieveUser(token,userId);
 		return new ResponseEntity<>(responseClass, HttpStatus.OK);
 	}
 
@@ -113,8 +113,8 @@ public class FundooUserController {
 	 * @Param phone number
 	 */
 	@DeleteMapping("/deleteUserPermanent")
-	public ResponseEntity<ResponseClass> deleteUserPermanent(@RequestParam String phoneNumber) {
-		ResponseClass responseClass = iFundooUserService.deleteUserPermanent(phoneNumber);
+	public ResponseEntity<ResponseClass> deleteUserPermanent(@RequestHeader String token,@RequestParam Long userId) {
+		ResponseClass responseClass = iFundooUserService.deleteUserPermanent(token,userId);
 		return new ResponseEntity<>(responseClass, HttpStatus.OK);
 	}
 
@@ -176,4 +176,14 @@ public class FundooUserController {
 
 		return new ResponseEntity<>(fileUplodeResponse, HttpStatus.OK);
 	}
+	
+	  /**
+     * Purpose:Creating method to validate user using token
+     * @author Manoj
+     * @Param  token
+     */
+    @GetMapping("/validate/{token}")
+    public boolean validate(@PathVariable String token){
+        return iFundooUserService.validateToken(token);
+    }
 }

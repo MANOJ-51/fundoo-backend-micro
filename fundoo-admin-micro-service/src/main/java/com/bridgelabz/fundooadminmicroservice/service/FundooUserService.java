@@ -3,16 +3,17 @@ package com.bridgelabz.fundooadminmicroservice.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.bridgelabz.fundooadminmicroservice.dto.FundooUserDTO;
 import com.bridgelabz.fundooadminmicroservice.exceptions.CustomExceptions;
 import com.bridgelabz.fundooadminmicroservice.model.FundooUserModel;
-import com.bridgelabz.fundooadminmicroservice.model.Trash;
 import com.bridgelabz.fundooadminmicroservice.repository.IFundooUserRepository;
-import com.bridgelabz.fundooadminmicroservice.repository.TrashRepository;
 import com.bridgelabz.fundooadminmicroservice.util.ResponseClass;
 import com.bridgelabz.fundooadminmicroservice.util.TokenUtill;
 
@@ -29,13 +30,13 @@ public class FundooUserService implements IFundooUserService {
 	IFundooUserRepository iFundooUserRepository;
 
 	@Autowired
-	TrashRepository trashRepository;
-
-	@Autowired
 	TokenUtill tokenUtill;
 
 	@Autowired
 	MailService mailService;
+	
+	@Autowired
+    PasswordEncoder passwordEncoder;
 
 	/**
 	 * Purpose:Creating method to add user
@@ -46,9 +47,12 @@ public class FundooUserService implements IFundooUserService {
 	@Override
 	public ResponseClass createUser(@Valid FundooUserDTO fundooUserDTO) {
 		FundooUserModel fundooUserModel = new FundooUserModel(fundooUserDTO);
+		fundooUserModel.setPassword(passwordEncoder.encode(fundooUserDTO.getPassword()));
 		fundooUserModel.setCreatedAt(LocalDateTime.now());
+		fundooUserModel.setIsActive(true);
+		fundooUserModel.setIsDelete(false);
 		iFundooUserRepository.save(fundooUserModel);
-		String body = "User Registration Is Successful with id :-" + fundooUserModel.getId() + "\n" + fundooUserModel;
+		String body = "User Registration Is Successful with id :-" + fundooUserModel.getUserId() + "\n" + fundooUserModel;
 		String subject = "User Registration Success";
 		mailService.send(fundooUserModel.getEmail(), body, subject);
 		return new ResponseClass(200, "success", fundooUserModel);
@@ -75,7 +79,7 @@ public class FundooUserService implements IFundooUserService {
 				isUserPresent.get().setPhoneNumber(phoneNumber);
 				isUserPresent.get().setUpdatedAt(LocalDateTime.now());
 				iFundooUserRepository.save(isUserPresent.get());
-				String body = "User Update Is Successful with id :-" + isUserPresent.get().getId() + "\n"
+				String body = "User Update Is Successful with id :-" + isUserPresent.get().getUserId() + "\n"
 						+ isUserPresent.get();
 				String subject = "User Update Success";
 				mailService.send(isUserPresent.get().getEmail(), body, subject);
@@ -117,19 +121,10 @@ public class FundooUserService implements IFundooUserService {
 		if (isUserIdPresent.isPresent()) {
 			Optional<FundooUserModel> isUserPresent = iFundooUserRepository.findById(userId);
 			if (isUserPresent.isPresent()) {
-				Trash trash = new Trash();
-				trash.setId(isUserPresent.get().getId());
-				trash.setName(isUserPresent.get().getName());
-				trash.setEmail(isUserPresent.get().getEmail());
-				trash.setDateOfBirth(isUserPresent.get().getDateOfBirth());
-				trash.setPassword(isUserPresent.get().getPassword());
-				trash.setIsActive(isUserPresent.get().getIsActive());
-				trash.setCreatedAt(isUserPresent.get().getCreatedAt());
-				trash.setUpdatedAt(isUserPresent.get().getUpdatedAt());
-				trash.setPhoneNumber(isUserPresent.get().getPhoneNumber());
-				trashRepository.save(trash);
-				iFundooUserRepository.delete(isUserPresent.get());
-				String body = "User Deleted Is Successful with id :-" + isUserPresent.get().getId() + "\n"
+				isUserPresent.get().setIsActive(false);
+				isUserPresent.get().setIsDelete(true);
+				iFundooUserRepository.save(isUserPresent.get());
+				String body = "User Deleted Is Successful with id :-" + isUserPresent.get().getUserId() + "\n"
 						+ isUserPresent.get();
 				String subject = "User Deleted Success";
 				mailService.send(isUserPresent.get().getEmail(), body, subject);
@@ -146,26 +141,21 @@ public class FundooUserService implements IFundooUserService {
 	 * @Param phone number
 	 */
 	@Override
-	public ResponseClass retrieveUser(String phoneNumber) {
-		Optional<Trash> isEmailPresent = trashRepository.findByPhoneNumber(phoneNumber);
-		if (isEmailPresent.isPresent()) {
-			FundooUserModel fundooUserModel = new FundooUserModel();
-			fundooUserModel.setId(isEmailPresent.get().getId());
-			fundooUserModel.setName(isEmailPresent.get().getName());
-			fundooUserModel.setEmail(isEmailPresent.get().getEmail());
-			fundooUserModel.setDateOfBirth(isEmailPresent.get().getDateOfBirth());
-			fundooUserModel.setIsActive(isEmailPresent.get().getIsActive());
-			fundooUserModel.setPassword(isEmailPresent.get().getPassword());
-			fundooUserModel.setCreatedAt(isEmailPresent.get().getCreatedAt());
-			fundooUserModel.setUpdatedAt(isEmailPresent.get().getUpdatedAt());
-			fundooUserModel.setPhoneNumber(isEmailPresent.get().getPhoneNumber());
-			iFundooUserRepository.save(fundooUserModel);
-			trashRepository.delete(isEmailPresent.get());
-			String body = "User Deleted Is Successful with id :-" + isEmailPresent.get().getId() + "\n"
-					+ isEmailPresent.get();
-			String subject = "User Deleted Success";
-			mailService.send(isEmailPresent.get().getEmail(), body, subject);
-			return new ResponseClass(200, "success", isEmailPresent.get());
+	public ResponseClass retrieveUser(String token, Long userId) {
+		Long usersId = tokenUtill.decodeToken(token);
+		Optional<FundooUserModel> isUserIdPresent = iFundooUserRepository.findById(usersId);
+		if (isUserIdPresent.isPresent()) {
+			Optional<FundooUserModel> isUserPresent = iFundooUserRepository.findById(userId);
+			if (isUserPresent.isPresent() && isUserPresent.get().getIsDelete() == true) {
+				isUserPresent.get().setIsDelete(false);
+				isUserPresent.get().setIsActive(true);
+				iFundooUserRepository.save(isUserPresent.get());
+				String body = "User retrieved Is Successful with id :-" + isUserPresent.get().getUserId() + "\n"
+						+ isUserPresent.get();
+				String subject = "User retrieved Success";
+				mailService.send(isUserPresent.get().getEmail(), body, subject);
+				return new ResponseClass(200, "success", isUserPresent.get());
+			}
 		}
 		throw new CustomExceptions(400, "User Not Found");
 	}
@@ -177,13 +167,17 @@ public class FundooUserService implements IFundooUserService {
 	 * @Param phone number
 	 */
 	@Override
-	public ResponseClass deleteUserPermanent(String phoneNumber) {
-		Optional<Trash> isEmailPresent = trashRepository.findByPhoneNumber(phoneNumber);
-		if (isEmailPresent.isPresent()) {
-			trashRepository.delete(isEmailPresent.get());
-			return new ResponseClass(200, "success", isEmailPresent.get());
+	public ResponseClass deleteUserPermanent(String token, Long userId) {
+		Long usersId = tokenUtill.decodeToken(token);
+		Optional<FundooUserModel> isUserIdPresent = iFundooUserRepository.findById(usersId);
+		if (isUserIdPresent.isPresent()) {
+			Optional<FundooUserModel> isUserPresent = iFundooUserRepository.findById(userId);
+			if (isUserPresent.isPresent() && isUserPresent.get().getIsDelete() == true) {
+			iFundooUserRepository.delete(isUserPresent.get());
+			return new ResponseClass(200, "success", isUserPresent.get());
 		}
-		throw new CustomExceptions(400, "User Not Found");
+		}
+		throw new CustomExceptions(400, "User Not Found in trash");
 
 	}
 
@@ -197,8 +191,9 @@ public class FundooUserService implements IFundooUserService {
 	public ResponseClass loginToken(String emailId, String password) {
 		Optional<FundooUserModel> isEmailPresent = iFundooUserRepository.findByEmail(emailId);
 		if (isEmailPresent.isPresent()) {
-			if (isEmailPresent.get().getPassword().equals(password)) {
-				String token = tokenUtill.createToken(isEmailPresent.get().getId());
+			//if (isEmailPresent.get().getPassword().equals(password)) {
+			if(passwordEncoder.matches(password,isEmailPresent.get().getPassword())){
+				String token = tokenUtill.createToken(isEmailPresent.get().getUserId());
 				return new ResponseClass(200, "Login Success", token);
 			} else {
 				throw new CustomExceptions(400, "Password is Wrong");
@@ -217,7 +212,7 @@ public class FundooUserService implements IFundooUserService {
 	public ResponseClass resetPassword(String email) {
 		Optional<FundooUserModel> isEmailPresent = iFundooUserRepository.findByEmail(email);
 		if (isEmailPresent.isPresent()) {
-			String token = tokenUtill.createToken(isEmailPresent.get().getId());
+			String token = tokenUtill.createToken(isEmailPresent.get().getUserId());
 			String url = System.getenv("url") + "\n" + token;
 			String subject = "Admin reset Success";
 			mailService.send(isEmailPresent.get().getEmail(), url, subject);
@@ -236,15 +231,30 @@ public class FundooUserService implements IFundooUserService {
 		Long userId = tokenUtill.decodeToken(token);
 		Optional<FundooUserModel> isUserIdPresent = iFundooUserRepository.findById(userId);
 		if (isUserIdPresent.isPresent()) {
-			isUserIdPresent.get().setPassword(newPassword);
+			isUserIdPresent.get().setPassword(passwordEncoder.encode(newPassword));
 			iFundooUserRepository.save(isUserIdPresent.get());
-			String body = "Admin Change Password Is Successful with id :-" + isUserIdPresent.get().getId() + "\n"
+			String body = "Admin Change Password Is Successful with id :-" + isUserIdPresent.get().getUserId() + "\n"
 					+ isUserIdPresent.get();
 			String subject = "Admin Change Password Success";
 			mailService.send(isUserIdPresent.get().getEmail(), body, subject);
 			return new ResponseClass(200, "success", isUserIdPresent.get());
 		}
 		throw new CustomExceptions(400, "Invalid Token");
+	}
+
+	 /**
+     * Purpose:Creating method to validate user using token
+     * @author Manoj
+     * @Param  token
+     */
+	@Override
+	public boolean validateToken(String token) {
+		 Long userId = tokenUtill.decodeToken(token);
+	        Optional<FundooUserModel> isUserPresent = iFundooUserRepository.findById(userId);
+	        if (isUserPresent.isPresent()){
+	            return true;
+	        }
+	        return false;
 	}
 
 }

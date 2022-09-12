@@ -25,13 +25,14 @@ public class FundooUserModel {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long Id;
+	private Long userId;
 	private String name;
 	private String email;
 	private String password;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private Boolean isActive;
+	private Boolean isDelete;
 	private String dateOfBirth;
 	private String phoneNumber;
 	private File profilePic;
@@ -40,7 +41,6 @@ public class FundooUserModel {
 		this.name = fundooUserDTO.getName();
 		this.email = fundooUserDTO.getEmail();
 		this.password = fundooUserDTO.getPassword();
-		this.isActive = fundooUserDTO.getIsActive();
 		this.dateOfBirth = fundooUserDTO.getDateOfBirth();
 		this.phoneNumber = fundooUserDTO.getPhoneNumber();
 	}

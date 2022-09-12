@@ -19,8 +19,6 @@ public class FundooUserDTO {
 	private String email;
 	@NotNull(message = "Password Should Not be Null")
 	private String password;
-	@NotNull(message = "Active Should Not be Null")
-	private Boolean isActive;
 	@NotNull(message = "Date of Birth Should Not be Null")
 	private String dateOfBirth;
 	@NotNull(message = "Mobile Number Should Not be Null")

@@ -20,14 +20,16 @@ public interface IFundooUserService {
 
 	ResponseClass deleteUser(String token, Long userId);
 
-	ResponseClass retrieveUser(String phoneNumber);
+	ResponseClass retrieveUser(String token, Long userId);
 
-	ResponseClass deleteUserPermanent(String phoneNumber);
+	ResponseClass deleteUserPermanent(String token, Long userId);
 
 	ResponseClass loginToken(String emailId, String password);
 
 	ResponseClass resetPassword(String email);
 
 	ResponseClass changePassword(String token, String newPassword);
+
+	boolean validateToken(String token);
 
 }
