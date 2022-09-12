@@ -13,7 +13,7 @@ public interface IFundooUserService {
 
 	ResponseClass createUser(@Valid FundooUserDTO fundooUserDTO);
 
-	ResponseClass updateUser(String token, Long userId, String name, String email, String phoneNumber,
+	ResponseClass updateUser(String token,String name, String email, String phoneNumber,
 			String dateOfBirth, Boolean isActive);
 
 	List<FundooUserModel> getList(String token);

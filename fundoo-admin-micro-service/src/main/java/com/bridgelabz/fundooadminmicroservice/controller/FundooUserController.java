@@ -61,11 +61,11 @@ public class FundooUserController {
 	 * @author Manoj
 	 * @Param fundoo user Dto ,id ,token ,name ,email
 	 */
-	@PutMapping("/updateUser/{userId}")
-	public ResponseEntity<ResponseClass> updateUser(@RequestHeader String token, @PathVariable @NotBlank Long userId,
+	@PutMapping("/updateUser")
+	public ResponseEntity<ResponseClass> updateUser(@RequestHeader String token, 
 			@RequestParam String name, @RequestParam @NotBlank String email, @RequestParam @NotBlank String phoneNumber,
 			@RequestParam @NotBlank String dateOfBirth, @RequestParam @NotBlank Boolean isActive) {
-		ResponseClass responseClass = iFundooUserService.updateUser(token, userId, name, email, phoneNumber,
+		ResponseClass responseClass = iFundooUserService.updateUser(token,  name, email, phoneNumber,
 				dateOfBirth, isActive);
 		return new ResponseEntity<>(responseClass, HttpStatus.OK);
 	}
