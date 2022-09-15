@@ -6,11 +6,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import com.bridgelabz.fundooadminmicroservice.dto.FundooUserDTO;
 
 import lombok.Data;
+import lombok.extern.java.Log;
 
 /**
  * Purpose:Creating model for user
@@ -35,7 +37,8 @@ public class FundooUserModel {
 	private Boolean isDelete;
 	private String dateOfBirth;
 	private String phoneNumber;
-	private File profilePic;
+	@Lob
+	private byte[] profilePic;
 
 	public FundooUserModel(FundooUserDTO fundooUserDTO) {
 		this.name = fundooUserDTO.getName();

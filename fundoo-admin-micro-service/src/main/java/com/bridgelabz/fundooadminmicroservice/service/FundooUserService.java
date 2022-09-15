@@ -1,5 +1,6 @@
 package com.bridgelabz.fundooadminmicroservice.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgelabz.fundooadminmicroservice.dto.FundooUserDTO;
 import com.bridgelabz.fundooadminmicroservice.exceptions.CustomExceptions;
@@ -251,6 +253,37 @@ public class FundooUserService implements IFundooUserService {
 		Long userId = tokenUtill.decodeToken(token);
 		Optional<FundooUserModel> isUserPresent = iFundooUserRepository.findById(userId);
 		if (isUserPresent.isPresent()) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Purpose:Creating method to addProfile
+	 * 
+	 * @author Manoj
+	 * @throws IOException 
+	 * @Param multipartfile
+	 */
+	@Override
+	public ResponseClass addProfile(String token, MultipartFile multipartFile,Long userId) throws IOException {
+		Long usersId = tokenUtill.decodeToken(token);
+		Optional<FundooUserModel> isUserPresent = iFundooUserRepository.findById(usersId);
+		if (isUserPresent.isPresent()) {
+			Optional <FundooUserModel> isIdPresent =iFundooUserRepository.findById(userId);
+			if (isIdPresent.isPresent()) {
+				isIdPresent.get().setProfilePic(multipartFile.getBytes());
+				iFundooUserRepository.save(isIdPresent.get());
+				return new ResponseClass(200, "success", isIdPresent.get());
+			}
+		}
+		throw new CustomExceptions(400, "Invalid Token");
+	}
+
+	@Override
+	public Boolean validateEmail(String email) {
+		Optional <FundooUserModel> isEmailPresent = iFundooUserRepository.findByEmail(email);
+		if (isEmailPresent.isPresent()) {
 			return true;
 		}
 		return false;

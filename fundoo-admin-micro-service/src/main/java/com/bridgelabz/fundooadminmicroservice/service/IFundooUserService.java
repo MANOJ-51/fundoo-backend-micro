@@ -1,9 +1,12 @@
 package com.bridgelabz.fundooadminmicroservice.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgelabz.fundooadminmicroservice.dto.FundooUserDTO;
 import com.bridgelabz.fundooadminmicroservice.model.FundooUserModel;
@@ -13,8 +16,8 @@ public interface IFundooUserService {
 
 	ResponseClass createUser(@Valid FundooUserDTO fundooUserDTO);
 
-	ResponseClass updateUser(String token,String name, String email, String phoneNumber,
-			String dateOfBirth, Boolean isActive);
+	ResponseClass updateUser(String token, String name, String email, String phoneNumber, String dateOfBirth,
+			Boolean isActive);
 
 	List<FundooUserModel> getList(String token);
 
@@ -31,5 +34,9 @@ public interface IFundooUserService {
 	ResponseClass changePassword(String token, String newPassword);
 
 	boolean validateToken(String token);
+
+	ResponseClass addProfile(String token, MultipartFile multipartFile, Long userId) throws IOException;
+
+	Boolean validateEmail(String email);
 
 }

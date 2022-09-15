@@ -19,14 +19,8 @@ public class NoteDTO {
 	private String title;
 	@NotNull(message = "description Should Not be Null")
 	private String description;
-	@NotNull(message = "serId Should Not be Null")
-	private Long userId;
-	@NotNull(message = "lableId Should Not be Null")
-	private Long lableId;
-	@NotNull(message = "email Should Not be Null")
-	private String email;
 	@NotNull(message = "color Should Not be Null")
 	private String color;
-	@NotNull(message = "collaborator Should Not be Null")
-	private List<String> collaborator;
+	@NotNull(message = "email Should Not be Null")
+	private String email;
 }

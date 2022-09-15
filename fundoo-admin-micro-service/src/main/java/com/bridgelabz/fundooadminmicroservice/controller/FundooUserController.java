@@ -50,7 +50,7 @@ public class FundooUserController {
 	 * @Param fundoo user dto
 	 */
 	@PostMapping("/createUser")
-	public ResponseEntity<ResponseClass> createUser(@Valid @RequestBody  FundooUserDTO fundooUserDTO) {
+	public ResponseEntity<ResponseClass> createUser(@Valid @RequestBody FundooUserDTO fundooUserDTO) {
 		ResponseClass responseClass = iFundooUserService.createUser(fundooUserDTO);
 		return new ResponseEntity<>(responseClass, HttpStatus.OK);
 	}
@@ -62,11 +62,11 @@ public class FundooUserController {
 	 * @Param fundoo user Dto ,id ,token ,name ,email
 	 */
 	@PutMapping("/updateUser")
-	public ResponseEntity<ResponseClass> updateUser(@RequestHeader String token, 
-			@RequestParam String name, @RequestParam @NotBlank String email, @RequestParam @NotBlank String phoneNumber,
+	public ResponseEntity<ResponseClass> updateUser(@RequestHeader String token, @RequestParam String name,
+			@RequestParam @NotBlank String email, @RequestParam @NotBlank String phoneNumber,
 			@RequestParam @NotBlank String dateOfBirth, @RequestParam @NotBlank Boolean isActive) {
-		ResponseClass responseClass = iFundooUserService.updateUser(token,  name, email, phoneNumber,
-				dateOfBirth, isActive);
+		ResponseClass responseClass = iFundooUserService.updateUser(token, name, email, phoneNumber, dateOfBirth,
+				isActive);
 		return new ResponseEntity<>(responseClass, HttpStatus.OK);
 	}
 
@@ -101,8 +101,8 @@ public class FundooUserController {
 	 * @Param phone number
 	 */
 	@PostMapping("/retrieveUser")
-	public ResponseEntity<ResponseClass> retrieveUser(@RequestHeader String token,@RequestParam Long userId) {
-		ResponseClass responseClass = iFundooUserService.retrieveUser(token,userId);
+	public ResponseEntity<ResponseClass> retrieveUser(@RequestHeader String token, @RequestParam Long userId) {
+		ResponseClass responseClass = iFundooUserService.retrieveUser(token, userId);
 		return new ResponseEntity<>(responseClass, HttpStatus.OK);
 	}
 
@@ -113,8 +113,8 @@ public class FundooUserController {
 	 * @Param phone number
 	 */
 	@DeleteMapping("/deleteUserPermanent")
-	public ResponseEntity<ResponseClass> deleteUserPermanent(@RequestHeader String token,@RequestParam Long userId) {
-		ResponseClass responseClass = iFundooUserService.deleteUserPermanent(token,userId);
+	public ResponseEntity<ResponseClass> deleteUserPermanent(@RequestHeader String token, @RequestParam Long userId) {
+		ResponseClass responseClass = iFundooUserService.deleteUserPermanent(token, userId);
 		return new ResponseEntity<>(responseClass, HttpStatus.OK);
 	}
 
@@ -155,35 +155,37 @@ public class FundooUserController {
 	}
 
 	/**
-	 * Purpose:Creating method to uplode file
+	 * Purpose:Creating method to addProfile
 	 * 
 	 * @author Manoj
 	 * @Param multipartfile
 	 */
-	@PostMapping("/uplodefile")
-	public ResponseEntity<FileUplodeResponse> uplodeFile(@RequestParam("file") MultipartFile multipartFile)
+	@PostMapping("/addProfile")
+	public ResponseEntity<ResponseClass> addProfile(@RequestHeader String token,@RequestBody MultipartFile multipartFile,@RequestParam Long userId)
 			throws IOException {
+		ResponseClass responseClass = iFundooUserService.addProfile(token,multipartFile,userId);
+		return new ResponseEntity<>(responseClass, HttpStatus.OK);
+	}
 
-		String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-		Long size = multipartFile.getSize();
-
-		FileUplodeUtill.saveFile(fileName, multipartFile);
-
-		FileUplodeResponse fileUplodeResponse = new FileUplodeResponse();
-		fileUplodeResponse.setFileName(fileName);
-		fileUplodeResponse.setDownlodeUrl("/downlodeFile");
-		fileUplodeResponse.setSize(size);
-
-		return new ResponseEntity<>(fileUplodeResponse, HttpStatus.OK);
+	/**
+	 * Purpose:Creating method to validate user using token
+	 * 
+	 * @author Manoj
+	 * @Param token
+	 */
+	@GetMapping("/validate/{token}")
+	public boolean validate(@PathVariable String token) {
+		return iFundooUserService.validateToken(token);
 	}
 	
-	  /**
-     * Purpose:Creating method to validate user using token
-     * @author Manoj
-     * @Param  token
-     */
-    @GetMapping("/validate/{token}")
-    public boolean validate(@PathVariable String token){
-        return iFundooUserService.validateToken(token);
-    }
+	/**
+	 * Purpose:Creating method to validate user using token
+	 * 
+	 * @author Manoj
+	 * @Param token
+	 */
+	@GetMapping("/validateEmail/{email}")
+	public Boolean validateEmail(@PathVariable String email) {
+		return iFundooUserService.validateEmail(email);
+	}
 }
