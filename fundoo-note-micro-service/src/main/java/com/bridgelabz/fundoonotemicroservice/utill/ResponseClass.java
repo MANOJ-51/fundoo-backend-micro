@@ -15,7 +15,14 @@ public class ResponseClass {
 	private int errorCode;
 	private String errorMessage;
 	private Object token;
-
+    private Object user;
+	public ResponseClass(int errorCode, String errorMessage, Object token) {
+		super();
+		this.errorCode = errorCode;
+		this.errorMessage = errorMessage;
+		this.token = token;
+	}
 	public ResponseClass() {
+		super();
 	}
 }

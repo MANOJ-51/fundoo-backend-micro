@@ -1,6 +1,7 @@
 package com.bridgelabz.fundoonotemicroservice.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,5 +24,7 @@ public interface INoteRepository extends JpaRepository<NoteModel, Long> {
 
 	@Query(value = "select * from note_details where isTrash = true ", nativeQuery = true)
 	List<NoteModel> findByTrash();
+
+	Optional<NoteModel> findByUserId(Long usersId);
 
 }

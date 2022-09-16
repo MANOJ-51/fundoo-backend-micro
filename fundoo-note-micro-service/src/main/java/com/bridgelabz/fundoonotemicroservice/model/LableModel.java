@@ -30,6 +30,7 @@ public class LableModel {
 	private String lableName;
 	private LocalDateTime createdDate;
 	private LocalDateTime updatedTime;
+	private Long userId;
 	@JsonIgnore
 	@ManyToMany(mappedBy = "lableList")
 	private List<NoteModel> notes;

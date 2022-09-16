@@ -201,9 +201,9 @@ public class NoteController {
 	 * @Param email,notesId,collaborators
 	 */
 	@PostMapping("/addCollab")
-	public ResponseEntity<ResponseClass> addCollab(@RequestParam String email, @RequestParam Long noteId,
-			@RequestParam List<String> collaborators) {
-		ResponseClass responseClass = iNoteService.addCollab(email, noteId, collaborators);
+	public ResponseEntity<ResponseClass> addCollab(@RequestHeader String token,@RequestParam String email, @RequestParam Long noteId,
+			@RequestParam String collaborator,@RequestParam Long collabUserId) {
+		ResponseClass responseClass = iNoteService.addCollab(token,email, noteId, collaborator,collabUserId);
 		return new ResponseEntity<>(responseClass, HttpStatus.OK);
 	}
 

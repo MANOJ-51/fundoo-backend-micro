@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.bridgelabz.fundooadminmicroservice.dto.FundooUserDTO;
 import com.bridgelabz.fundooadminmicroservice.model.FundooUserModel;
 import com.bridgelabz.fundooadminmicroservice.util.ResponseClass;
+import com.bridgelabz.fundooadminmicroservice.util.UserResponse;
 
 public interface IFundooUserService {
 
@@ -37,6 +38,6 @@ public interface IFundooUserService {
 
 	ResponseClass addProfile(String token, MultipartFile multipartFile, Long userId) throws IOException;
 
-	Boolean validateEmail(String email);
+	UserResponse validateEmail(String email);
 
 }

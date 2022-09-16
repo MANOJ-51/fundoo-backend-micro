@@ -39,7 +39,7 @@ public interface INoteService {
 
 	ResponseClass updateUser(String token, Long noteId, String description, String color, String title);
 
-	ResponseClass addCollab(String email, Long noteId, List<String> collaborators);
+	ResponseClass addCollab(String token,String email, Long noteId,String collaborator,Long collabUserId);
 
 	List<NoteModel> archiveList(String token);
 

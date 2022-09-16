@@ -18,6 +18,7 @@ import com.bridgelabz.fundooadminmicroservice.model.FundooUserModel;
 import com.bridgelabz.fundooadminmicroservice.repository.IFundooUserRepository;
 import com.bridgelabz.fundooadminmicroservice.util.ResponseClass;
 import com.bridgelabz.fundooadminmicroservice.util.TokenUtill;
+import com.bridgelabz.fundooadminmicroservice.util.UserResponse;
 
 /**
  * Purpose:Creating Service for user
@@ -281,12 +282,12 @@ public class FundooUserService implements IFundooUserService {
 	}
 
 	@Override
-	public Boolean validateEmail(String email) {
+	public UserResponse validateEmail(String email) {
 		Optional <FundooUserModel> isEmailPresent = iFundooUserRepository.findByEmail(email);
 		if (isEmailPresent.isPresent()) {
-			return true;
+			return new UserResponse (200,"sucess",isEmailPresent.get());
 		}
-		return false;
+		throw new CustomExceptions(400, "Invalid Token");
 	}
 
 }

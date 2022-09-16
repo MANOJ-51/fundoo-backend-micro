@@ -1,9 +1,0 @@
-package com.bridgelabz.fundooadminmicroservice.repository;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.bridgelabz.fundooadminmicroservice.model.FundooUserModel;
-
-public interface IFundooUserRepository extends JpaRepository<FundooUserModel, Long> {
-
-}

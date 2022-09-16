@@ -2,14 +2,11 @@ package com.bridgelabz.fundooadminmicroservice.controller;
 
 import java.io.IOException;
 import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,13 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.bridgelabz.fundooadminmicroservice.dto.FundooUserDTO;
 import com.bridgelabz.fundooadminmicroservice.model.FundooUserModel;
 import com.bridgelabz.fundooadminmicroservice.service.IFundooUserService;
-import com.bridgelabz.fundooadminmicroservice.util.FileUplodeResponse;
-import com.bridgelabz.fundooadminmicroservice.util.FileUplodeUtill;
 import com.bridgelabz.fundooadminmicroservice.util.ResponseClass;
+import com.bridgelabz.fundooadminmicroservice.util.UserResponse;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
@@ -161,9 +156,9 @@ public class FundooUserController {
 	 * @Param multipartfile
 	 */
 	@PostMapping("/addProfile")
-	public ResponseEntity<ResponseClass> addProfile(@RequestHeader String token,@RequestBody MultipartFile multipartFile,@RequestParam Long userId)
-			throws IOException {
-		ResponseClass responseClass = iFundooUserService.addProfile(token,multipartFile,userId);
+	public ResponseEntity<ResponseClass> addProfile(@RequestHeader String token,
+			@RequestBody MultipartFile multipartFile, @RequestParam Long userId) throws IOException {
+		ResponseClass responseClass = iFundooUserService.addProfile(token, multipartFile, userId);
 		return new ResponseEntity<>(responseClass, HttpStatus.OK);
 	}
 
@@ -177,7 +172,7 @@ public class FundooUserController {
 	public boolean validate(@PathVariable String token) {
 		return iFundooUserService.validateToken(token);
 	}
-	
+
 	/**
 	 * Purpose:Creating method to validate user using token
 	 * 
@@ -185,7 +180,8 @@ public class FundooUserController {
 	 * @Param token
 	 */
 	@GetMapping("/validateEmail/{email}")
-	public Boolean validateEmail(@PathVariable String email) {
-		return iFundooUserService.validateEmail(email);
+	public ResponseEntity<UserResponse> validateEmail(@PathVariable String email) {
+		UserResponse userResponse = iFundooUserService.validateEmail(email);
+		return new ResponseEntity<>(userResponse, HttpStatus.OK);
 	}
 }

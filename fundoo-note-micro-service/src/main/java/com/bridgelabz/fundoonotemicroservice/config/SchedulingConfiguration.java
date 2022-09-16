@@ -37,7 +37,7 @@ public class SchedulingConfiguration {
 	 * 
 	 * @Param  Version 1.0
 	 */
-	@Scheduled(fixedDelay = 11000)
+	@Scheduled(fixedDelay = 999999999)
 	public void emailScheudleJob () {
 		List<NoteModel> noteList =iNoteRepository.findAll();
 		for(NoteModel noteModel:noteList) {
@@ -47,7 +47,7 @@ public class SchedulingConfiguration {
 			
 			if (remaiderDateFormate.equals(currentDate)) {
 				try {
-				String body = " You have a Remainder";
+				String body = " You have a Remainder : "+noteModel.getDescription();
 				String subject = "Remainder";
 				mailService.send(noteModel.getEmail(), body, subject);
 				System.out.println("remainder sent sucessfully");

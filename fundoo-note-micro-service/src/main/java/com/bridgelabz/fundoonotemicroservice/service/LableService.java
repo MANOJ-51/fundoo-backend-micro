@@ -47,10 +47,13 @@ public class LableService implements ILableService {
 	 */
 	@Override
 	public ResponseClass createLable(String token, @Valid LableDTO lableDto) {
-		boolean isUserPresent = restTemplate.getForObject("http://localhost:5666/user/validate/" + token, Boolean.class);
+		boolean isUserPresent = restTemplate.getForObject("http://localhost:5666/user/validate/" + token,
+				Boolean.class);
 		if (isUserPresent) {
+			Long usersId = tokenUtill.decodeToken(token);
 			LableModel lableModel = new LableModel(lableDto);
 			lableModel.setCreatedDate(LocalDateTime.now());
+			lableModel.setUserId(usersId);
 			lableRepository.save(lableModel);
 			return new ResponseClass(200, "success", lableModel);
 		}
@@ -65,14 +68,19 @@ public class LableService implements ILableService {
 	 */
 	@Override
 	public ResponseClass updateLable(String token, Long lableId, @Valid LableDTO lableDto) {
-		boolean isUserPresent = restTemplate.getForObject("http://localhost:5666/user/validate/" + token, Boolean.class);
+		boolean isUserPresent = restTemplate.getForObject("http://localhost:5666/user/validate/" + token,
+				Boolean.class);
 		if (isUserPresent) {
-			Optional<LableModel> isLablePresent = lableRepository.findById(lableId);
-			if (isLablePresent.isPresent()) {
-				isLablePresent.get().setLableName(lableDto.getLableName());
-				isLablePresent.get().setUpdatedTime(LocalDateTime.now());
-				lableRepository.save(isLablePresent.get());
-				return new ResponseClass(200, "success", isLablePresent.get());
+			Long usersId = tokenUtill.decodeToken(token);
+			Optional<LableModel> isUseridPresent = lableRepository.findByUserId(usersId);
+			if (isUseridPresent.isPresent()) {
+				Optional<LableModel> isLablePresent = lableRepository.findById(lableId);
+				if (isLablePresent.isPresent()) {
+					isLablePresent.get().setLableName(lableDto.getLableName());
+					isLablePresent.get().setUpdatedTime(LocalDateTime.now());
+					lableRepository.save(isLablePresent.get());
+					return new ResponseClass(200, "success", isLablePresent.get());
+				}
 			}
 		}
 		throw new CustomExceptions(400, "token not valid");
@@ -86,11 +94,16 @@ public class LableService implements ILableService {
 	 */
 	@Override
 	public List<LableModel> getList(String token) {
-		boolean isUserPresent = restTemplate.getForObject("http://localhost:5666/user/validate/" + token, Boolean.class);
+		boolean isUserPresent = restTemplate.getForObject("http://localhost:5666/user/validate/" + token,
+				Boolean.class);
 		if (isUserPresent) {
-			List<LableModel> getList = lableRepository.findAll();
-			if (getList.size() > 0) {
-				return getList;
+			Long usersId = tokenUtill.decodeToken(token);
+			Optional<LableModel> isUseridPresent = lableRepository.findByUserId(usersId);
+			if (isUseridPresent.isPresent()) {
+				List<LableModel> getList = lableRepository.findAll();
+				if (getList.size() > 0) {
+					return getList;
+				}
 			}
 		}
 		throw new CustomExceptions(400, "token not valid");
@@ -104,12 +117,17 @@ public class LableService implements ILableService {
 	 */
 	@Override
 	public ResponseClass deleteNote(String token, Long lableId) {
-		boolean isUserPresent = restTemplate.getForObject("http://localhost:5666/user/validate/" + token, Boolean.class);
+		boolean isUserPresent = restTemplate.getForObject("http://localhost:5666/user/validate/" + token,
+				Boolean.class);
 		if (isUserPresent) {
-			Optional<LableModel> isLablePresent = lableRepository.findById(lableId);
-			if (isLablePresent.isPresent()) {
-				lableRepository.delete(isLablePresent.get());
-				return new ResponseClass(200, "success", isLablePresent.get());
+			Long usersId = tokenUtill.decodeToken(token);
+			Optional<LableModel> isUseridPresent = lableRepository.findByUserId(usersId);
+			if (isUseridPresent.isPresent()) {
+				Optional<LableModel> isLablePresent = lableRepository.findById(lableId);
+				if (isLablePresent.isPresent()) {
+					lableRepository.delete(isLablePresent.get());
+					return new ResponseClass(200, "success", isLablePresent.get());
+				}
 			}
 		}
 		throw new CustomExceptions(400, "note is not in trash");

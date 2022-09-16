@@ -41,6 +41,7 @@ public class NoteModel {
 	private LocalDateTime registerDate;
 	private LocalDateTime updateDate;
 	private boolean isTrash;
+	private Long userId;
 	private boolean isArchieve;
 	private boolean isPin;
 	private String color;
