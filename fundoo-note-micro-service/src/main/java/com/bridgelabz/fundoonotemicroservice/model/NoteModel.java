@@ -56,7 +56,6 @@ public class NoteModel {
 	public NoteModel(NoteDTO noteDTO) {
 		this.title = noteDTO.getTitle();
 		this.description = noteDTO.getDescription();
-		this.color = noteDTO.getColor();
 		this.email = noteDTO.getEmail();
 	}
 

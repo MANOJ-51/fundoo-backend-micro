@@ -37,7 +37,7 @@ public interface INoteService {
 
 	List<NoteModel> pinList(String token);
 
-	ResponseClass updateUser(String token, Long noteId, String description, String color, String title);
+	ResponseClass updateUser(String token, Long noteId, String description, String title);
 
 	ResponseClass addCollab(String token,String email, Long noteId,String collaborator,Long collabUserId);
 
@@ -48,5 +48,7 @@ public interface INoteService {
 	ResponseClass addLables(String token, Long noteId, List<Long> lableId);
 
 	ResponseClass addRemainder(String token, Long noteId, Date remainder);
+
+	ResponseClass addColor(String token, String color);
 
 }

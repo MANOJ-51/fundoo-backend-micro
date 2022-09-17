@@ -1,4 +1,4 @@
-package com.bridgelabz.fundooadminmicroservice.util;
+package com.bridgelabz.fundoonotemicroservice.utill;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -19,6 +19,7 @@ import com.bridgelabz.fundoonotemicroservice.repository.INoteRepository;
 import com.bridgelabz.fundoonotemicroservice.repository.LableRepository;
 import com.bridgelabz.fundoonotemicroservice.utill.ResponseClass;
 import com.bridgelabz.fundoonotemicroservice.utill.TokenUtill;
+import com.bridgelabz.fundoonotemicroservice.utill.UserResponse;
 
 /**
  * Purpose:Creating Service for note
@@ -73,7 +74,7 @@ public class NoteService implements INoteService {
 	 * @Param token,title,email,description,color,userId,lableId,noteId
 	 */
 	@Override
-	public ResponseClass updateUser(String token, Long noteId, String description, String color, String title) {
+	public ResponseClass updateUser(String token, Long noteId, String description, String title) {
 		boolean isUserPresent = restTemplate.getForObject("http://localhost:5666/user/validate/" + token,
 				Boolean.class);
 		if (isUserPresent) {
@@ -84,7 +85,6 @@ public class NoteService implements INoteService {
 				if (isNotePresent.isPresent()) {
 					isNotePresent.get().setTitle(title);
 					isNotePresent.get().setDescription(description);
-					isNotePresent.get().setColor(color);
 					isNotePresent.get().setUpdateDate(LocalDateTime.now());
 					iNoteRepository.save(isNotePresent.get());
 					return new ResponseClass(200, "success", isNotePresent.get());
@@ -106,12 +106,9 @@ public class NoteService implements INoteService {
 				Boolean.class);
 		if (isUserPresent) {
 			Long usersId = tokenUtill.decodeToken(token);
-			Optional<NoteModel> isUseridPresent = iNoteRepository.findByUserId(usersId);
-			if (isUseridPresent.isPresent()) {
-				List<NoteModel> getList = iNoteRepository.findAll();
-				if (getList.size() > 0) {
-					return getList;
-				}
+			List<NoteModel> getList = iNoteRepository.findByUsersId(usersId);
+			if (getList.size() > 0) {
+				return getList;
 			}
 		}
 		throw new CustomExceptions(400, "token not valid");
@@ -303,12 +300,9 @@ public class NoteService implements INoteService {
 				Boolean.class);
 		if (isUserPresent) {
 			Long usersId = tokenUtill.decodeToken(token);
-			Optional<NoteModel> isUseridPresent = iNoteRepository.findByUserId(usersId);
-			if (isUseridPresent.isPresent()) {
-				List<NoteModel> pinList = iNoteRepository.findByIsPin();
-				if (pinList.size() > 0) {
-					return pinList;
-				}
+			List<NoteModel> pinList = iNoteRepository.findByIsPin(usersId);
+			if (pinList.size() > 0) {
+				return pinList;
 			}
 		}
 		throw new CustomExceptions(400, "token not valid");
@@ -331,16 +325,16 @@ public class NoteService implements INoteService {
 			Optional<NoteModel> isUseridPresent = iNoteRepository.findByUserId(usersId);
 
 			if (isUseridPresent.isPresent()) {
-				Object isEmailPresent = restTemplate.getForObject("http://localhost:5666/user/validateEmail/" + email,
-						Object.class);
+				UserResponse isEmailPresent = restTemplate.getForObject("http://localhost:5666/user/validateEmail/" + email,
+						UserResponse.class);
 
 				if (isEmailPresent != null) {
 					Optional<NoteModel> isNotePresent = iNoteRepository.findById(noteId);
 
 					if (isNotePresent.isPresent()) {
 						List<String> collabList = new ArrayList<>();
-						Object isEmailIdPresent = restTemplate
-								.getForObject("http://localhost:5666/user/validateEmail/" + collaborator, Object.class);
+						UserResponse isEmailIdPresent = restTemplate
+								.getForObject("http://localhost:5666/user/validateEmail/" + collaborator, UserResponse.class);
 
 						if (isEmailIdPresent != null) {
 							collabList.add(collaborator);
@@ -355,6 +349,7 @@ public class NoteService implements INoteService {
 
 						NoteModel noteModel = new NoteModel();
 						noteModel.setUserId(collabUserId);
+						noteModel.setEmail(collaborator);
 						noteModel.setTitle(isNotePresent.get().getTitle());
 						noteModel.setDescription(isNotePresent.get().getDescription());
 						noteModel.setCollaborator(noteList);
@@ -381,12 +376,9 @@ public class NoteService implements INoteService {
 				Boolean.class);
 		if (isUserPresent) {
 			Long usersId = tokenUtill.decodeToken(token);
-			Optional<NoteModel> isUseridPresent = iNoteRepository.findByUserId(usersId);
-			if (isUseridPresent.isPresent()) {
-				List<NoteModel> pinList = iNoteRepository.findByIsArchive();
-				if (pinList.size() > 0) {
-					return pinList;
-				}
+			List<NoteModel> pinList = iNoteRepository.findByIsArchive(usersId);
+			if (pinList.size() > 0) {
+				return pinList;
 			}
 		}
 		throw new CustomExceptions(400, "token not valid");
@@ -404,12 +396,9 @@ public class NoteService implements INoteService {
 				Boolean.class);
 		if (isUserPresent) {
 			Long usersId = tokenUtill.decodeToken(token);
-			Optional<NoteModel> isUseridPresent = iNoteRepository.findByUserId(usersId);
-			if (isUseridPresent.isPresent()) {
-				List<NoteModel> pinList = iNoteRepository.findByTrash();
-				if (pinList.size() > 0) {
-					return pinList;
-				}
+			List<NoteModel> pinList = iNoteRepository.findByTrash(usersId);
+			if (pinList.size() > 0) {
+				return pinList;
 			}
 		}
 		throw new CustomExceptions(400, "token not valid");
@@ -468,6 +457,22 @@ public class NoteService implements INoteService {
 					iNoteRepository.save(isNoteIdPresent.get());
 					return new ResponseClass(200, "success", isNoteIdPresent.get());
 				}
+			}
+		}
+		throw new CustomExceptions(400, "token not valid");
+	}
+
+	@Override
+	public ResponseClass addColor(String token, String color) {
+		boolean isUserPresent = restTemplate.getForObject("http://localhost:5666/user/validate/" + token,
+				Boolean.class);
+		if (isUserPresent) {
+			Long usersId = tokenUtill.decodeToken(token);
+			Optional<NoteModel> isUseridPresent = iNoteRepository.findByUserId(usersId);
+			if (isUseridPresent.isPresent()) {
+				isUseridPresent.get().setColor(color);
+				iNoteRepository.save(isUseridPresent.get());
+				return new ResponseClass(200, "success", isUseridPresent.get());
 			}
 		}
 		throw new CustomExceptions(400, "token not valid");

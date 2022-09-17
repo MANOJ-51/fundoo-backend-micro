@@ -16,16 +16,18 @@ import com.bridgelabz.fundoonotemicroservice.model.NoteModel;
  */
 public interface INoteRepository extends JpaRepository<NoteModel, Long> {
 
-	@Query(value = "select * from note_details where isTrash = true ", nativeQuery = true)
-	List<NoteModel> findByIsPin();
+	@Query(value = "select * from note_details where is_Pin = true and user_Id =:usersId ", nativeQuery = true)
+	List<NoteModel> findByIsPin(Long usersId);
 
-	@Query(value = "select * from note_details where isArchieve = true ", nativeQuery = true)
-	List<NoteModel> findByIsArchive();
+	@Query(value = "select * from note_details where is_Archieve = true and user_Id =:usersId ", nativeQuery = true)
+	List<NoteModel> findByIsArchive(Long usersId);
 
-	@Query(value = "select * from note_details where isTrash = true ", nativeQuery = true)
-	List<NoteModel> findByTrash();
+	@Query(value = "select * from note_details where is_Trash = true and user_Id =:usersId", nativeQuery = true)
+	List<NoteModel> findByTrash(Long usersId);
 
+	
 	Optional<NoteModel> findByUserId(Long usersId);
 
+	@Query(value = "select * from note_details where user_Id =:usersId ", nativeQuery = true)
 	List<NoteModel> findByUsersId(Long usersId);
 }

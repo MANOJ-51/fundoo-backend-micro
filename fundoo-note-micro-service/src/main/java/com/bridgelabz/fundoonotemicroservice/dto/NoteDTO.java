@@ -19,8 +19,6 @@ public class NoteDTO {
 	private String title;
 	@NotNull(message = "description Should Not be Null")
 	private String description;
-	@NotNull(message = "color Should Not be Null")
-	private String color;
 	@NotNull(message = "email Should Not be Null")
 	private String email;
 }

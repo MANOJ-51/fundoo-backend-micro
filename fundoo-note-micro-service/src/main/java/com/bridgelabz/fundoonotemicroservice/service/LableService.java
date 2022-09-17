@@ -98,14 +98,11 @@ public class LableService implements ILableService {
 				Boolean.class);
 		if (isUserPresent) {
 			Long usersId = tokenUtill.decodeToken(token);
-			Optional<LableModel> isUseridPresent = lableRepository.findByUserId(usersId);
-			if (isUseridPresent.isPresent()) {
-				List<LableModel> getList = lableRepository.findAll();
+				List<LableModel> getList = lableRepository.findByUsersId(usersId);
 				if (getList.size() > 0) {
 					return getList;
 				}
 			}
-		}
 		throw new CustomExceptions(400, "token not valid");
 	}
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-    <fullyQualifiedTypeName name="javax.persistence.GeneratedValue"/>
     <fullyQualifiedTypeName name="javax.persistence.GenerationType"/>
     <fullyQualifiedTypeName name="com.bridgelabz.fundoonotemicroservice.dto.LableDTO"/>
     <fullyQualifiedTypeName name="org.springframework.data.jpa.repository.JpaRepository"/>
@@ -60,4 +59,5 @@
     <fullyQualifiedTypeName name="com.bridgelabz.fundooadminmicroservice.util.UserResponse"/>
     <fullyQualifiedTypeName name="lombok.AllArgsConstructor"/>
     <fullyQualifiedTypeName name="java.lang.Object"/>
+    <fullyQualifiedTypeName name="com.bridgelabz.fundoonotemicroservice.utill.UserResponse"/>
 </qualifiedTypeNameHistroy>

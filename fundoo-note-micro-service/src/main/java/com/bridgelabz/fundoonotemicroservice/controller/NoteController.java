@@ -42,7 +42,7 @@ public class NoteController {
 	 * @author Manoj
 	 * @Param dto,token
 	 */
-	@PostMapping("/createNotesWithLables")
+	@PostMapping("/createNote")
 	public ResponseEntity<ResponseClass> createNote(@RequestHeader String token, @RequestBody @Valid NoteDTO noteDto) {
 		ResponseClass responseClass = iNoteService.createNote(token, noteDto);
 		return new ResponseEntity<>(responseClass, HttpStatus.OK);
@@ -56,9 +56,9 @@ public class NoteController {
 	 */
 	@PutMapping("update/{noteId}")
 	public ResponseEntity<ResponseClass> updateUser(@RequestHeader String token, @PathVariable Long noteId,
-			@RequestParam String title, @RequestParam String description, @RequestParam String color) {
+			@RequestParam String title, @RequestParam String description) {
 
-		ResponseClass responseClass = iNoteService.updateUser(token, noteId, title, description, color);
+		ResponseClass responseClass = iNoteService.updateUser(token, noteId, title, description);
 		return new ResponseEntity<>(responseClass, HttpStatus.OK);
 	}
 
@@ -230,6 +230,18 @@ public class NoteController {
 	public ResponseEntity<ResponseClass> addLables(@RequestHeader String token, @RequestParam Long noteId,
 			@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date remainder) {
 		ResponseClass responseClass = iNoteService.addRemainder(token, noteId, remainder);
+		return new ResponseEntity<>(responseClass, HttpStatus.OK);
+	}
+	
+	/**
+	 * Purpose:Creating method to add note with lable
+	 * 
+	 * @author Manoj
+	 * @Param dto,token
+	 */
+	@PutMapping("/addColor")
+	public ResponseEntity<ResponseClass> addColor(@RequestHeader String token, @RequestParam String color) {
+		ResponseClass responseClass = iNoteService.addColor(token, color);
 		return new ResponseEntity<>(responseClass, HttpStatus.OK);
 	}
 }
