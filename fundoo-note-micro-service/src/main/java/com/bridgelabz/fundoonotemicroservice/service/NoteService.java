@@ -321,47 +321,47 @@ public class NoteService implements INoteService {
 	 * @Param email,notesId,collaborators
 	 */
 	@Override
-	public ResponseClass addCollab(String token, String email, Long noteId, String collaborator,Long collabUserId) {
+	public ResponseClass addCollab(String token, String email, Long noteId, String collaborator, Long collabUserId) {
 
 		boolean isUserPresent = restTemplate.getForObject("http://localhost:5666/user/validate/" + token,
 				Boolean.class);
-		
+
 		if (isUserPresent) {
 			Long usersId = tokenUtill.decodeToken(token);
 			Optional<NoteModel> isUseridPresent = iNoteRepository.findByUserId(usersId);
-			
+
 			if (isUseridPresent.isPresent()) {
 				Object isEmailPresent = restTemplate.getForObject("http://localhost:5666/user/validateEmail/" + email,
 						Object.class);
-				
-				if (!isEmailPresent.equals(null)) {
+
+				if (isEmailPresent != null) {
 					Optional<NoteModel> isNotePresent = iNoteRepository.findById(noteId);
-					
+
 					if (isNotePresent.isPresent()) {
 						List<String> collabList = new ArrayList<>();
-						Object isEmailIdPresent = restTemplate.getForObject(
-								"http://localhost:5666/user/validateEmail/" + collaborator, Object.class);
-						
-						if (!isEmailIdPresent.equals(null)) {
+						Object isEmailIdPresent = restTemplate
+								.getForObject("http://localhost:5666/user/validateEmail/" + collaborator, Object.class);
+
+						if (isEmailIdPresent != null) {
 							collabList.add(collaborator);
 						} else {
 							throw new CustomExceptions(400, "email is not present");
 						}
-						
+
 						isNotePresent.get().setCollaborator(collabList);
 						iNoteRepository.save(isNotePresent.get());
 						List<String> noteList = new ArrayList<>();
 						noteList.add(isNotePresent.get().getEmail());
-						
+
 						NoteModel noteModel = new NoteModel();
 						noteModel.setUserId(collabUserId);
 						noteModel.setTitle(isNotePresent.get().getTitle());
 						noteModel.setDescription(isNotePresent.get().getDescription());
 						noteModel.setCollaborator(noteList);
 						iNoteRepository.save(noteModel);
-						return new ResponseClass(200, "success", isNotePresent.get(),isEmailIdPresent);
+						return new ResponseClass(200, "success", isNotePresent.get(), isEmailIdPresent);
 					}
-				}else {
+				} else {
 					throw new CustomExceptions(400, "User Not Found");
 				}
 			}

@@ -27,4 +27,5 @@ public interface INoteRepository extends JpaRepository<NoteModel, Long> {
 
 	Optional<NoteModel> findByUserId(Long usersId);
 
+	List<NoteModel> findByUsersId(Long usersId);
 }

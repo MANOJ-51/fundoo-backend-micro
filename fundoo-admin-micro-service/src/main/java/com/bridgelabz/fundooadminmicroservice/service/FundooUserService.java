@@ -263,15 +263,15 @@ public class FundooUserService implements IFundooUserService {
 	 * Purpose:Creating method to addProfile
 	 * 
 	 * @author Manoj
-	 * @throws IOException 
+	 * @throws IOException
 	 * @Param multipartfile
 	 */
 	@Override
-	public ResponseClass addProfile(String token, MultipartFile multipartFile,Long userId) throws IOException {
+	public ResponseClass addProfile(String token, MultipartFile multipartFile, Long userId) throws IOException {
 		Long usersId = tokenUtill.decodeToken(token);
 		Optional<FundooUserModel> isUserPresent = iFundooUserRepository.findById(usersId);
 		if (isUserPresent.isPresent()) {
-			Optional <FundooUserModel> isIdPresent =iFundooUserRepository.findById(userId);
+			Optional<FundooUserModel> isIdPresent = iFundooUserRepository.findById(userId);
 			if (isIdPresent.isPresent()) {
 				isIdPresent.get().setProfilePic(multipartFile.getBytes());
 				iFundooUserRepository.save(isIdPresent.get());
@@ -283,11 +283,11 @@ public class FundooUserService implements IFundooUserService {
 
 	@Override
 	public UserResponse validateEmail(String email) {
-		Optional <FundooUserModel> isEmailPresent = iFundooUserRepository.findByEmail(email);
+		Optional<FundooUserModel> isEmailPresent = iFundooUserRepository.findByEmail(email);
 		if (isEmailPresent.isPresent()) {
-			return new UserResponse (200,"sucess",isEmailPresent.get());
+			return new UserResponse(200, "sucess", isEmailPresent.get());
 		}
-		throw new CustomExceptions(400, "Invalid Token");
+		return null;
 	}
 
 }
